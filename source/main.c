@@ -182,7 +182,7 @@ int exer_1(int state) {
 			num = 0x00;
                         for ( k = 1; k < 9; k++){
                                 if (display[4][k] == 1){
-					PORTD = 0xFE;
+					PORTD = 0xF7;
                                         num = num | (0x01 << (k - 1)) ;
                                 }
                         }
@@ -211,27 +211,713 @@ int exer_1(int state) {
 }
 
 
+unsigned int waitbool = 0;
+enum bounce1 { b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, end };
+int bounce(int state) {
+	unsigned char tmpA = ~PINA;
+	unsigned int cnt = 1;
+        // Transitions
+        switch (state) {
 
+                case b1:
+                        if ( tmpA == 0x01 ) { // Reset demo 
+                                state = b5;
+                        }
+			else{
+				state = b2;
+			}
+			break;
+		
+		case b2:
+			if ( tmpA == 0x01 ) { // Reset demo 
+                                state = b5;
+                        }
+                        else{
+                                state = b3;
+                        }
+                        break;
+
+		case b3:
+			if ( tmpA == 0x01 ) {
+				state = b5;
+			}
+			else{
+				state = b4;
+			}
+			break;
+
+		case b4:
+			if ( tmpA == 0x01 ) { // Reset demo
+                                state = b5;
+                        }
+                        else{
+                                state = b1;
+                        }
+                        break;
+
+		case b5:
+			if (waitbool == 0) {
+				state = b5;
+			}
+			else{
+				cnt = cnt + 1;
+				if (cnt >= 5){
+					state = b6; 
+				}
+				else{
+					state = b1;
+				}
+			}
+			break;
+
+		case b6:
+			if ( tmpA == 0x01 ) { // Reset demo
+                                if (cnt == 8){
+                                        state = end;
+                                }
+				state = b5;
+                        }
+                        else{
+                                state = b7;
+                        }
+                        break;
+
+		case b7:
+                        if ( tmpA == 0x01 ) { // Reset demo
+                                if (cnt == 8){
+                                        state = end;
+                                }
+				state = b5;
+                        }
+                        else{
+                                state = b8;
+                        }
+                        break;
+
+		case b8:
+                        if ( tmpA == 0x01 ) { // Reset demo
+                                if (cnt == 8){
+                                        state = end;
+                                }
+				state = b5;
+                        }
+                        else{
+                                state = b9;
+                        }
+                        break;
+
+		case b9:
+                        if ( tmpA == 0x01 ) { // Reset demo
+                                if (cnt == 8){
+                                        state = end;
+                                }
+				state = b5;
+                        }
+                        else{
+                                state = b10;
+                        }
+                        break;
+
+		case b10:
+                        if ( tmpA == 0x01 ) { // Reset demo
+				if (cnt == 7){
+                                        state = end;
+                                }
+                                state = b5;
+                        }
+                        else{
+                                state = b11;
+                        }
+                        break;
+
+		case b11:
+                        if ( tmpA == 0x01 ) { // Reset demo
+				if (cnt >= 8){
+					state = end;
+				}
+                                state = b5;
+                        }
+                        else{
+                                state = b6;
+                        }
+                        break;
+
+		case end:
+			state = end;
+
+                default:
+                        state = b1;
+                        break;
+        }
+        // Actions
+        switch (state) {
+                case b1:
+			display[1][8] = 1;
+			display[2][8] = 1;
+			display[3][8] = 1;
+			display[4][8] = 0;
+			display[5][8] = 0;
+                        break;
+
+		case b2:
+                        display[1][8] = 0;
+                        display[2][8] = 1;
+                        display[3][8] = 1;
+                        display[4][8] = 1;
+                        display[5][8] = 0;
+                        break;
+
+		case b3:
+                        display[1][8] = 0;
+                        display[2][8] = 0;
+                        display[3][8] = 1;
+                        display[4][8] = 1;
+                        display[5][8] = 1;
+                        break;
+
+		case b4:
+                        display[1][8] = 0;
+                        display[2][8] = 1;
+                        display[3][8] = 1;
+                        display[4][8] = 1;
+                        display[5][8] = 0;
+                        break;
+
+		case b5:
+			/*display[1][8] = 0;
+                        display[2][8] = 0;
+                        display[3][8] = 0;
+                        display[4][8] = 0;
+                        display[5][8] = 0*/
+			break;
+		case b6:
+                        display[1][8] = 1;
+                        display[2][8] = 1;
+                        display[3][8] = 0;
+                        display[4][8] = 0;
+                        display[5][8] = 0;
+                        break;
+
+		case b7:
+                        display[1][8] = 0;
+                        display[2][8] = 1;
+                        display[3][8] = 1;
+                        display[4][8] = 0;
+                        display[5][8] = 0;
+                        break;
+
+		case b8:
+                        display[1][8] = 0;
+                        display[2][8] = 0;
+                        display[3][8] = 1;
+                        display[4][8] = 1;
+                        display[5][8] = 0;
+                        break;
+
+		case b9:
+                        display[1][8] = 0;
+                        display[2][8] = 0;
+                        display[3][8] = 0;
+                        display[4][8] = 1;
+                        display[5][8] = 1;
+                        break;
+
+		case b10:
+                        display[1][8] = 0;
+                        display[2][8] = 0;
+                        display[3][8] = 1;
+                        display[4][8] = 1;
+                        display[5][8] = 0;
+                        break;
+
+		case b11:
+                        display[1][8] = 0;
+                        display[2][8] = 1;
+                        display[3][8] = 1;
+                        display[4][8] = 0;
+                        display[5][8] = 0;
+                        break;
+
+		case end:
+			if ( display[1][8] == 1) {
+				if ( display[1][7] == 0){
+					display[1][8] = 0;
+				}
+                        }
+                        if ( display[2][8] == 1) {
+                        	if ( display[2][7] == 0){
+                                        display[2][8] = 0;
+                                }
+                        }
+                        if ( display[3][8] == 1) {
+				if ( display[3][7] == 0){
+                                        display[3][8] = 0;
+                                }
+                        }
+			if ( display[4][8] == 1) {
+				if ( display[4][7] == 0){
+                                        display[4][8] = 0;
+                                }
+
+                        }
+			if ( display[5][8] == 1) {
+				if ( display[5][7] == 0){
+                                        display[5][8] = 0;
+                                }
+                        }
+			
+			break;
+
+                default:
+        	break;
+        }
+
+        return state;
+}
+
+
+unsigned int c1 = 1;
+unsigned int c2 = 8;
+unsigned int c3 = 1;
+unsigned int i;
+unsigned int m;
+unsigned int n;
+
+enum Slide_States { Wait, Press, Fall, Press2, Fall2, Press3, Press4, Press5, Press6  };
+int Slide(int state) {
+	unsigned char tmpA = ~PINA;
+
+
+
+        // Transitions
+        switch (state) {
+                case Wait:
+			if ( tmpA == 0x01 ){
+				waitbool = 0;
+				if (c3 == 1){
+					state = Press;
+				}
+				else if (c3 == 2){
+					c1 = 1;
+					c2 = 8;
+					state = Press2;
+				}
+				else if (c3 == 3){
+					c1 = 1;
+					c2 = 8;
+					state = Press3;
+				}
+				else if (c3 == 4) {
+					c1 = 1;
+					c2 = 8;
+					state = Press4;
+				}
+				else if (c3 == 5) {
+					c1 = 1;
+					c2 = 8;
+					state = Press5;
+				}
+				else if (c3 == 6){
+					c1 = 1;
+					c2 = 8;
+					state = Press6;
+				}
+				else if (c3 == 7){
+					state = Fall;
+				}
+				
+			}
+			else{
+				state = Wait;
+			}
+                        break;
+
+		case Press:
+			if ( c1 != 7 ){
+				state = Press;
+			}
+			else {
+				waitbool = 1;
+				c3 = 2;
+				state = Fall;
+
+			}
+			break;
+
+		case Fall:
+			state = Wait;
+			break;
+
+		case Press2:
+			if ( c1 != 6 ){
+                                state = Press2;
+                        }
+                        else {
+                                waitbool = 1;
+                                c3 = 3;
+                                state = Fall;
+
+                        }
+			break;
+
+		//case Fall2:
+		//	state = Wait;
+		//	break;
+
+		case Press3:
+                        if ( c1 != 5 ){
+                                state = Press3;
+                        }
+                        else {
+                                waitbool = 1;
+                                c3 = 4;
+                                state = Fall;
+
+                        }
+                        break;
+
+		case Press4:
+                        if ( c1 != 4 ){
+                                state = Press4;
+                        }
+                        else {
+                                waitbool = 1;
+                                c3 = 5;
+                                state = Fall;
+
+                        }
+                        break;
+
+		case Press5:
+                        if ( c1 != 3 ){
+                                state = Press5;
+                        }
+                        else {
+                                waitbool = 1;
+                                c3 = 6;
+                                state = Fall;
+
+                        }
+                        break;
+
+		case Press6:
+                        if ( c1 != 2 ){
+                                state = Press6;
+                        }
+                        else {
+                                waitbool = 1;
+                                c3 = 7;
+                                state = Fall;
+
+                        }
+                        break;
+
+		/*case Press7:
+                        waitbool = 1;
+                        c3 = 8;
+                        state = Fall;
+                        break;
+		*/
+                default:
+                        state = Wait;
+                        break;
+        }
+        // Actions
+        switch (state) {
+                case Wait:
+			break;
+
+		case Press:
+			if ( display[1][c2] == 1){
+				i = 1;
+				m = 2;
+				n = 3;
+			}
+
+			else if ( display[2][c2] == 1){
+				i = 2;
+				m = 3;
+				n = 4;
+			}
+
+			else if ( display[3][c2] == 1){
+				i = 3;
+				m = 4;
+				n = 5;
+			}
+			display[i][c2] = 0;
+			display[m][c2] = 0;
+			display[n][c2] = 0;
+
+			c2 = c2 - 1;
+                        
+			display[i][c2] = 1;
+			display[m][c2] = 1;
+			display[n][c2] = 1;
+			
+			c1++;			
+			break;
+
+		case Fall:
+			if ( display[i][c2-1] == 0) {
+				display[i][c2] = 0;
+			}
+			if ( display[m][c2-1] == 0) {
+				display[m][c2] = 0;
+			}
+			if ( display[n][c2-1] == 0) {
+				display[n][c2] = 0;
+			}
+			break;
+
+		case Press2:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                                n = 3;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                                n = 4;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                                n = 5;
+                        }
+                        display[i][c2] = 0;
+                        display[m][c2] = 0;
+                        display[n][c2] = 0;
+
+                        c2 = c2 - 1;
+
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+                        display[n][c2] = 1;
+
+                        c1++;
+                        break;
+
+		/*case Fall2:
+                        if ( display[i][c2-1] == 0) {
+                                display[i][c2] = 0;
+                        }
+                        if ( display[m][c2-1] == 0) {
+                                display[m][c2] = 0;
+                        }
+                        if ( display[n][c2-1] == 0) {
+                                display[n][c2] = 0;
+                        }
+                        break;*/
+
+
+		case Press3:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                                n = 3;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                                n = 4;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                                n = 5;
+                        }
+                        display[i][c2] = 0;
+                        display[m][c2] = 0;
+                        display[n][c2] = 0;
+
+                        c2 = c2 - 1;
+
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+                        display[n][c2] = 1;
+
+                        c1++;
+                        break;
+
+		/*case Fall3:
+                        if ( display[i][c2-1] == 0) {
+                                display[i][c2] = 0;
+                        }
+                        if ( display[m][c2-1] == 0) {
+                                display[m][c2] = 0;
+                        }
+                        if ( display[n][c2-1] == 0) {
+                                display[n][c2] = 0;
+                        }
+                        break;*/
+
+
+		case Press4:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                                n = 3;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                                n = 4;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                                n = 5;
+                        }
+                        display[i][c2] = 0;
+                        display[m][c2] = 0;
+                        display[n][c2] = 0;
+
+                        c2 = c2 - 1;
+
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+                        display[n][c2] = 1;
+
+                        c1++;
+                        break;
+
+
+		case Press5:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                        }
+			else if ( display[4][c2] == 1){
+				i = 4;
+				m = 5;
+			}
+
+                        display[i][c2] = 0;
+                        display[m][c2] = 0;
+                        //display[k][c2] = 0;
+
+                        c2 = c2 - 1;
+
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+                        //display[k][c2] = 1;
+
+                        c1++;
+                        break;
+
+		case Press6:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                        }
+                        else if ( display[4][c2] == 1){
+                                i = 4;
+                                m = 5;
+                        }
+
+                        display[i][c2] = 0;
+                        display[m][c2] = 0;
+
+                        c2 = c2 - 1;
+
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+
+                        c1++;
+                        break;
+
+		/*case Press7:
+                        if ( display[1][c2] == 1){
+                                i = 1;
+                                m = 2;
+                        }
+
+                        else if ( display[2][c2] == 1){
+                                i = 2;
+                                m = 3;
+                        }
+
+                        else if ( display[3][c2] == 1){
+                                i = 3;
+                                m = 4;
+                        }
+                        else if ( display[4][c2] == 1){
+                                i = 4;
+                                m = 5;
+                        }
+                        display[i][c2] = 1;
+                        display[m][c2] = 1;
+
+                        c1++;
+                        break;*/
+
+                default:
+        	break;
+        }
+
+
+        return state;
+}
 
 
 
 
 int main(void) {
     /* Insert DDR and PORT initializations */
+	DDRA = 0x00; PORTA = 0xFF;
 	DDRC = 0xFF; PORTC = 0x00;
 	DDRD = 0xFF; PORTD = 0x00;
 
     /* Insert your solution below */
-	//TimerSet(100);
-	//TimerOn();
-	//state = shift;
-	static task task1;
-	task *tasks[] = { &task1 };
+
+
+
+	static task task1, task2, task3;
+	task *tasks[] = { &task1, &task2, &task3 };
 	const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
-	task1.state = out1;
-	task1.period = 1;
+	
+	task1.state = b1;
+	task1.period = 100;
 	task1.elapsedTime = task1.period;
-	task1.TickFct = &exer_1;
+	task1.TickFct = &bounce;
+	
+	task2.state = Wait;
+	task2.period = 100;
+	task2.elapsedTime = task2.period;
+	task2.TickFct = &Slide;
+
+	task3.state = out1;
+	task3.period = 1;
+	task3.elapsedTime = task3.period;
+	task3.TickFct = &exer_1;
 
 	unsigned short i;
 	unsigned long GCD = tasks[0] -> period;
@@ -249,12 +935,11 @@ int main(void) {
 	}
 
 	PORTD = 0xFF;
-	display [1][1] = 1;
-	display [2][6] = 1;
-	display [3][8] = 1;
-	display [5][4] = 1;
-	display [5][5] = 1;
-	display [5][6] = 1;
+	display[2][1] = 1;
+	display[3][1] = 1;
+	display[4][1] = 1;
+	display[5][1] = 0;
+
 
     while (1) {
 	for ( i = 0; i < numTasks; i++) {
@@ -264,6 +949,7 @@ int main(void) {
 		}
 		tasks[i] -> elapsedTime += GCD;
 	}
+
 	while (!TimerFlag);
 	TimerFlag = 0;
 	
