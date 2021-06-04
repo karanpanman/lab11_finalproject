@@ -1,12 +1,14 @@
-/*	Author: lab
- *  Partner(s) Name: 
- *	Lab Section:
- *	Assignment: Lab #  Exercise #
- *	Exercise Description: [optional - include for your own benefit]
+/*	Name & E-mail: Karan Bhogal, kbhog001@ucr.edu
+ *	Lab Section: 21
+ *	Assignment: Lab #11  Exercise #1
+ *	Exercise Description: Stacker Game
+ *	
+ *	I acknowledge all content contained herein, excluding template 
+ * 	or example code, is my own original work.
  *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
+ *	Demo Link: https://www.youtube.com/watch?v=V1IlX2fiThI
  */
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #ifdef _SIMULATE_
